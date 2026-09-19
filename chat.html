@@ -32,13 +32,50 @@
       <div class="wrap">
         <p class="kicker">Comunidad</p>
         <h1>Chat de traders</h1>
-        <p class="lede">Chat libre y en directo: entra y escribe sin registrarte, como en Telegram o WhatsApp.</p>
+        <p class="lede">Directo y sin registro: elige un nombre y escribe.</p>
         <div class="rules">
           <div><strong>✅ Sí:</strong> preguntas, análisis con argumento, gestión del riesgo.</div>
           <div><strong>⛔ No:</strong> señales "seguras", spam, referidos ni consejos de inversión.</div>
         </div>
-        <div class="chat-box chat-live">
-          <iframe title="Chat en directo de Road to Trillon" src="https://web.libera.chat/#road-to-trillon"></iframe>
+
+        <div class="wa-chat" id="wa-chat" hidden>
+          <div class="wa-head">
+            <span class="wa-avatar" aria-hidden="true">📈</span>
+            <div class="wa-who">
+              <strong>Sala general</strong>
+              <span id="wa-status">conectando…</span>
+            </div>
+            <input id="wa-nick" class="wa-nick" maxlength="20" placeholder="Tu nombre" aria-label="Tu nombre en el chat" />
+          </div>
+          <div class="wa-msgs" id="wa-msgs" aria-live="polite"></div>
+          <form class="wa-form" id="wa-form">
+            <input id="wa-input" maxlength="300" placeholder="Escribe un mensaje…" autocomplete="off" aria-label="Escribe un mensaje" />
+            <button type="submit" aria-label="Enviar">➤</button>
+          </form>
+        </div>
+
+        <div class="setup-panel" id="wa-setup" hidden>
+          <h2>🔧 Falta conectar la base de datos (una sola vez)</h2>
+          <p>El chat ya está programado; solo falta la llave gratuita de Firebase. Pásasela a tu admin (o hazlo tú en 5 minutos):</p>
+          <ol>
+            <li>Entra en <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> → <strong>Crear proyecto</strong> (nombre <code>road-to-trillon</code>, sin Analytics).</li>
+            <li><strong>Compilación → Realtime Database → Crear base de datos</strong> → ubicación europea → <strong>modo bloqueado</strong>.</li>
+            <li>Pestaña <strong>Reglas</strong> y pega esto:
+<pre><code>{
+  "rules": {
+    "messages": {
+      ".read": true,
+      ".write": "auth != null",
+      "$m": {
+        ".validate": "newData.hasChildren(['nick','text','ts']) &amp;&amp; newData.child('text').val().length &lt;= 300"
+      }
+    }
+  }
+}</code></pre>
+            </li>
+            <li><strong>Compilación → Authentication → Comenzar → Anonymous → Habilitar.</strong></li>
+            <li>Rueda de <strong>Configuración del proyecto → Tus apps → web (&lt;/&gt;)</strong> → copia el objeto <code>firebaseConfig</code> y envíaselo a tu admin.</li>
+          </ol>
         </div>
       </div>
     </section>
@@ -52,5 +89,80 @@
   </footer>
 
   <script src="app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    /* Pega aquí tu firebaseConfig (la da la consola de Firebase, paso 5) */
+    const firebaseConfig = {
+      apiKey: "PEGA_AQUI_TU_API_KEY",
+      authDomain: "PEGA_AQUI",
+      databaseURL: "PEGA_AQUI",
+      projectId: "PEGA_AQUI",
+      appId: "PEGA_AQUI"
+    };
+
+    (function () {
+      const chat = document.getElementById("wa-chat");
+      const setup = document.getElementById("wa-setup");
+      if (firebaseConfig.apiKey.indexOf("PEGA") === 0) {
+        setup.hidden = false;
+        return;
+      }
+      chat.hidden = false;
+
+      const msgs = document.getElementById("wa-msgs");
+      const form = document.getElementById("wa-form");
+      const input = document.getElementById("wa-input");
+      const nickInput = document.getElementById("wa-nick");
+      const status = document.getElementById("wa-status");
+
+      nickInput.value = localStorage.getItem("wa-nick") || ("Trader" + Math.floor(100 + Math.random() * 900));
+      nickInput.addEventListener("change", () => {
+        localStorage.setItem("wa-nick", nickInput.value.trim().slice(0, 20) || "Anónimo");
+      });
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.database();
+      let uid = null;
+
+      status.textContent = "conectando…";
+      auth.signInAnonymously().then((cred) => {
+        uid = cred.user.uid;
+        status.textContent = "en línea";
+        const ref = db.ref("messages").limitToLast(100);
+        ref.on("child_added", (snap) => {
+          const m = snap.val();
+          if (!m || !m.text) return;
+          const div = document.createElement("div");
+          div.className = "msg" + (m.uid === uid ? " own" : "");
+          const who = document.createElement("div");
+          who.className = "msg-nick";
+          who.textContent = m.nick || "Anónimo";
+          const txt = document.createElement("div");
+          txt.textContent = m.text;
+          const time = document.createElement("div");
+          time.className = "msg-time";
+          time.textContent = m.ts ? new Date(m.ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }) : "";
+          div.appendChild(who);
+          div.appendChild(txt);
+          div.appendChild(time);
+          msgs.appendChild(div);
+          msgs.scrollTop = msgs.scrollHeight;
+        });
+      }).catch(() => { status.textContent = "sin conexión"; });
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const text = input.value.trim().slice(0, 300);
+        if (!text || !uid) return;
+        const nick = (nickInput.value.trim().slice(0, 20)) || "Anónimo";
+        localStorage.setItem("wa-nick", nick);
+        db.ref("messages").push({ nick, text, ts: firebase.database.ServerValue.TIMESTAMP, uid });
+        input.value = "";
+      });
+    })();
+  </script>
 </body>
 </html>

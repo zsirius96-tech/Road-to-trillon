@@ -92,6 +92,26 @@ section { padding: 56px 0; }
 .chat-live { padding: 0; overflow: hidden; }
 .chat-live iframe { display: block; width: 100%; height: 620px; border: 0; background: #fff; }
 
+/* Chat estilo WhatsApp */
+.wa-chat { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: #0b141a; max-width: 720px; }
+.wa-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #1f2c34; }
+.wa-avatar { font-size: 1.8rem; }
+.wa-who { display: grid; }
+.wa-who span { font-size: 0.8rem; color: var(--muted); }
+.wa-nick { margin-left: auto; width: 150px; background: #0b141a; border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 8px 10px; font: inherit; font-size: 0.9rem; }
+.wa-msgs { height: 420px; overflow-y: auto; padding: 18px 14px; display: flex; flex-direction: column; gap: 8px; background: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 18px 18px; }
+.msg { max-width: 78%; background: #1f2c34; border-radius: 0 12px 12px 12px; padding: 8px 12px 6px; align-self: flex-start; word-wrap: break-word; }
+.msg.own { align-self: flex-end; background: #005c4b; border-radius: 12px 0 12px 12px; }
+.msg.own .msg-nick { display: none; }
+.msg-nick { font-size: 0.75rem; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
+.msg-time { font-size: 0.7rem; color: rgba(230, 237, 243, 0.6); text-align: right; margin-top: 2px; }
+.wa-form { display: flex; gap: 10px; padding: 12px; background: #1f2c34; }
+.wa-form input { flex: 1; border: 0; border-radius: 999px; padding: 12px 18px; font: inherit; background: #2a3942; color: var(--text); }
+.wa-form input:focus { outline: none; }
+.wa-form button { width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--green); color: #04140a; font-size: 1.2rem; cursor: pointer; }
+.setup-panel { border: 1px dashed var(--gold); border-radius: var(--radius); padding: 22px; background: var(--bg-soft); max-width: 720px; }
+.setup-panel pre { background: var(--bg); padding: 14px; border-radius: 10px; overflow-x: auto; font-size: 0.8rem; }
+
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
 .footer-inner { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
