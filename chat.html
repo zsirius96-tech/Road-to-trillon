@@ -38,7 +38,7 @@
           <div><strong>⛔ No:</strong> señales "seguras", spam, referidos ni consejos de inversión.</div>
         </div>
 
-        <div class="wa-chat" id="wa-chat" hidden>
+        <div class="wa-chat" id="wa-chat">
           <div class="wa-head">
             <span class="wa-avatar" aria-hidden="true">📈</span>
             <div class="wa-who">
@@ -54,29 +54,6 @@
           </form>
         </div>
 
-        <div class="setup-panel" id="wa-setup" hidden>
-          <h2>🔧 Falta conectar la base de datos (una sola vez)</h2>
-          <p>El chat ya está programado; solo falta la llave gratuita de Firebase. Pásasela a tu admin (o hazlo tú en 5 minutos):</p>
-          <ol>
-            <li>Entra en <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> → <strong>Crear proyecto</strong> (nombre <code>road-to-trillon</code>, sin Analytics).</li>
-            <li><strong>Compilación → Realtime Database → Crear base de datos</strong> → ubicación europea → <strong>modo bloqueado</strong>.</li>
-            <li>Pestaña <strong>Reglas</strong> y pega esto:
-<pre><code>{
-  "rules": {
-    "messages": {
-      ".read": true,
-      ".write": "auth != null",
-      "$m": {
-        ".validate": "newData.hasChildren(['nick','text','ts']) &amp;&amp; newData.child('text').val().length &lt;= 300"
-      }
-    }
-  }
-}</code></pre>
-            </li>
-            <li><strong>Compilación → Authentication → Comenzar → Anonymous → Habilitar.</strong></li>
-            <li>Rueda de <strong>Configuración del proyecto → Tus apps → web (&lt;/&gt;)</strong> → copia el objeto <code>firebaseConfig</code> y envíaselo a tu admin.</li>
-          </ol>
-        </div>
       </div>
     </section>
   </main>
@@ -89,80 +66,90 @@
   </footer>
 
   <script src="app.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-  <script>
-    /* Pega aquí tu firebaseConfig (la da la consola de Firebase, paso 5) */
-    const firebaseConfig = {
-      apiKey: "PEGA_AQUI_TU_API_KEY",
-      authDomain: "PEGA_AQUI",
-      databaseURL: "PEGA_AQUI",
-      projectId: "PEGA_AQUI",
-      appId: "PEGA_AQUI"
-    };
+  <script type="module">
+    import { generateSecretKey, getPublicKey, finalizeEvent, SimplePool } from "https://esm.sh/nostr-tools@2.7.2";
 
-    (function () {
-      const chat = document.getElementById("wa-chat");
-      const setup = document.getElementById("wa-setup");
-      if (firebaseConfig.apiKey.indexOf("PEGA") === 0) {
-        setup.hidden = false;
-        return;
-      }
-      chat.hidden = false;
+    const RELAYS = ["wss://relay.damus.io", "wss://nos.lol", "wss://relay.snort.social"];
+    const TAG = "roadtotrillon";
+    const pool = new SimplePool();
 
-      const msgs = document.getElementById("wa-msgs");
-      const form = document.getElementById("wa-form");
-      const input = document.getElementById("wa-input");
-      const nickInput = document.getElementById("wa-nick");
-      const status = document.getElementById("wa-status");
+    const msgs = document.getElementById("wa-msgs");
+    const form = document.getElementById("wa-form");
+    const input = document.getElementById("wa-input");
+    const nickInput = document.getElementById("wa-nick");
+    const status = document.getElementById("wa-status");
+    const seen = new Set();
 
-      nickInput.value = localStorage.getItem("wa-nick") || ("Trader" + Math.floor(100 + Math.random() * 900));
-      nickInput.addEventListener("change", () => {
-        localStorage.setItem("wa-nick", nickInput.value.trim().slice(0, 20) || "Anónimo");
-      });
+    // Identidad anónima persistente en este navegador
+    let skHex = localStorage.getItem("wa-sk");
+    if (!skHex) {
+      skHex = Array.from(generateSecretKey()).map((b) => b.toString(16).padStart(2, "0")).join("");
+      localStorage.setItem("wa-sk", skHex);
+    }
+    const sk = new Uint8Array(skHex.match(/../g).map((h) => parseInt(h, 16)));
+    const mypk = getPublicKey(sk);
 
-      firebase.initializeApp(firebaseConfig);
-      const auth = firebase.auth();
-      const db = firebase.database();
-      let uid = null;
+    nickInput.value = localStorage.getItem("wa-nick") || ("Trader" + Math.floor(100 + Math.random() * 900));
+    nickInput.addEventListener("change", () => {
+      localStorage.setItem("wa-nick", nickInput.value.trim().slice(0, 20) || "Anónimo");
+    });
 
-      status.textContent = "conectando…";
-      auth.signInAnonymously().then((cred) => {
-        uid = cred.user.uid;
-        status.textContent = "en línea";
-        const ref = db.ref("messages").limitToLast(100);
-        ref.on("child_added", (snap) => {
-          const m = snap.val();
-          if (!m || !m.text) return;
-          const div = document.createElement("div");
-          div.className = "msg" + (m.uid === uid ? " own" : "");
-          const who = document.createElement("div");
-          who.className = "msg-nick";
-          who.textContent = m.nick || "Anónimo";
-          const txt = document.createElement("div");
-          txt.textContent = m.text;
-          const time = document.createElement("div");
-          time.className = "msg-time";
-          time.textContent = m.ts ? new Date(m.ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }) : "";
-          div.appendChild(who);
-          div.appendChild(txt);
-          div.appendChild(time);
-          msgs.appendChild(div);
-          msgs.scrollTop = msgs.scrollHeight;
-        });
-      }).catch(() => { status.textContent = "sin conexión"; });
+    function nickOf(ev) {
+      const t = ev.tags.find((x) => x[0] === "nick");
+      return (t && t[1]) || "Anónimo";
+    }
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const text = input.value.trim().slice(0, 300);
-        if (!text || !uid) return;
-        const nick = (nickInput.value.trim().slice(0, 20)) || "Anónimo";
-        localStorage.setItem("wa-nick", nick);
-        db.ref("messages").push({ nick, text, ts: firebase.database.ServerValue.TIMESTAMP, uid });
-        input.value = "";
-      });
-    })();
+    function render(ev) {
+      if (seen.has(ev.id)) return;
+      seen.add(ev.id);
+      const div = document.createElement("div");
+      div.dataset.ts = ev.created_at;
+      div.dataset.id = ev.id;
+      div.className = "msg" + (ev.pubkey === mypk ? " own" : "");
+      const who = document.createElement("div");
+      who.className = "msg-nick";
+      who.textContent = nickOf(ev);
+      const txt = document.createElement("div");
+      txt.textContent = (ev.content || "").slice(0, 300);
+      const time = document.createElement("div");
+      time.className = "msg-time";
+      time.textContent = new Date(ev.created_at * 1000).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+      div.appendChild(who);
+      div.appendChild(txt);
+      div.appendChild(time);
+      // insertar ordenado por fecha
+      const kids = Array.from(msgs.children);
+      const pos = kids.findIndex((k) => Number(k.dataset.ts) > ev.created_at);
+      if (pos === -1) msgs.appendChild(div);
+      else msgs.insertBefore(div, kids[pos]);
+      while (msgs.children.length > 100) msgs.removeChild(msgs.firstChild);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    status.textContent = "conectando…";
+    pool.subscribeMany(RELAYS, [{ kinds: [1], "#t": [TAG], limit: 50 }], {
+      onevent: (ev) => { status.textContent = "en línea"; render(ev); },
+      oneose: () => { status.textContent = "en línea"; }
+    });
+    setTimeout(() => { if (status.textContent === "conectando…") status.textContent = "reintentando…"; }, 8000);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const text = input.value.trim().slice(0, 300);
+      if (!text) return;
+      const nick = (nickInput.value.trim().slice(0, 20)) || "Anónimo";
+      localStorage.setItem("wa-nick", nick);
+      const ev = finalizeEvent({
+        kind: 1,
+        created_at: Math.floor(Date.now() / 1000),
+        tags: [["t", TAG], ["nick", nick]],
+        content: text
+      }, sk);
+      render(ev);
+      input.value = "";
+      try { await Promise.all(pool.publish(RELAYS, ev)); }
+      catch { status.textContent = "error al enviar"; }
+    });
   </script>
 </body>
 </html>
