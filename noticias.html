@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noticias del mercado — TradingLab</title>
+  <meta name="description" content="Noticias financieras diarias y calendario económico: lo que mueve la bolsa, divisas y cripto." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="TradingLab, inicio">
+        <span class="brand-mark" aria-hidden="true">📈</span>
+        <span>TradingLab <small>aprende · sigue · comparte</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Abrir menú">☰</button>
+        <ul id="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="noticias.html" aria-current="page">Noticias</a></li>
+          <li><a href="aprender.html">Aprender</a></li>
+          <li><a href="chat.html">Chat</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary header-cta" href="aprender.html">Empezar desde cero</a>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="wrap">
+        <p class="kicker">Actualizado cada día</p>
+        <h1>Noticias del mercado</h1>
+        <p class="lede">Titulares financieros en español y el calendario con los eventos que mueven precios: tipos de interés, IPC, empleo y resultados.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap grid-2">
+        <div>
+          <h2>Titulares de hoy</h2>
+          <div class="widget">
+            <script src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+            {"feedMode":"market","market":"stock","colorTheme":"dark","isTransparent":false,"displayMode":"regular","width":"100%","height":600,"locale":"es"}
+            </script>
+          </div>
+        </div>
+        <div>
+          <h2>Calendario económico</h2>
+          <div class="widget">
+            <script src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+            {"colorTheme":"dark","isTransparent":false,"locale":"es","countryFilter":"ar,au,br,ca,cn,fr,de,in,id,it,jp,kr,mx,ru,sa,za,tr,gb,us,eu","importanceFilter":"-1,0,1","width":"100%","height":600}
+            </script>
+          </div>
+          <div class="tip">
+            <strong>Cómo usarlo:</strong> los eventos marcados en rojo (impacto alto) suelen agitar el mercado. Evita abrir operaciones justo antes del IPC o los bancos centrales hasta que aprendas a gestionarlo. <a href="aprender.html#riesgo">Ver gestión del riesgo →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p><strong>TradingLab</strong> · Educación financiera sin humo</p>
+      <p class="legal">© <span id="year">2026</span> TradingLab · <a href="#top">Volver arriba</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

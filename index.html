@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TradingLab — Aprende y sigue el mercado</title>
+  <meta name="description" content="TradingLab: noticias diarias del mercado, formación para aprender trading desde cero y comunidad." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="tape">
+    <script src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {"symbols":[{"proName":"BME:IBEX","title":"IBEX 35"},{"proName":"NASDAQ:SPX","title":"S&P 500"},{"proName":"NASDAQ:NDX","title":"Nasdaq 100"},{"proName":"EURONEXT:PX1","title":"CAC 40"},{"proName":"XETR:DAX","title":"DAX"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},{"proName":"BINANCE:ETHUSDT","title":"Ethereum"},{"proName":"FX:EURUSD","title":"EUR/USD"}],"colorTheme":"dark","isTransparent":true,"displayMode":"adaptive","locale":"es"}
+    </script>
+  </div>
+
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="TradingLab, inicio">
+        <span class="brand-mark" aria-hidden="true">📈</span>
+        <span>TradingLab <small>aprende · sigue · comparte</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Abrir menú">☰</button>
+        <ul id="nav-list">
+          <li><a href="index.html" aria-current="page">Inicio</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="aprender.html">Aprender</a></li>
+          <li><a href="chat.html">Chat</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary header-cta" href="aprender.html">Empezar desde cero</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <p class="kicker">Mercados en vivo · Formación · Comunidad</p>
+        <h1>Entiende el mercado<br />antes de poner un euro.</h1>
+        <p class="lede">Noticias diarias, gráficos en tiempo real y una guía en español para aprender trading sin humo: riesgo primero, ganancias después.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="aprender.html">Aprender gratis</a>
+          <a class="btn btn-ghost" href="noticias.html">Ver noticias de hoy</a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <p class="kicker">Hoy en el mercado</p>
+        <h2>Mapa del mercado</h2>
+        <div class="widget">
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+          {"colorTheme":"dark","showChart":true,"locale":"es","width":"100%","height":"520","tabs":[{"title":"Acciones","symbols":[{"s":"BME:SAN"},{"s":"BME:BBVA"},{"s":"BME:IBE"},{"s":"NASDAQ:AAPL"},{"s":"NASDAQ:NVDA"},{"s":"NASDAQ:TSLA"}]},{"title":"Cripto","symbols":[{"s":"BINANCE:BTCUSDT"},{"s":"BINANCE:ETHUSDT"},{"s":"BINANCE:SOLUSDT"}]},{"title":"Divisas","symbols":[{"s":"FX:EURUSD"},{"s":"FX:GBPUSD"},{"s":"FX:USDJPY"}]}]}
+          </script>
+        </div>
+      </div>
+    </section>
+
+    <section class="cards-section">
+      <div class="wrap cards-3">
+        <article class="card">
+          <div class="card-ico" aria-hidden="true">📰</div>
+          <h2>Noticias diarias</h2>
+          <p>Lo que mueve la bolsa y las cripto cada día, más el calendario económico de la semana.</p>
+          <p><a class="card-link" href="noticias.html">Leer noticias →</a></p>
+        </article>
+        <article class="card">
+          <div class="card-ico" aria-hidden="true">🎓</div>
+          <h2>Aprende desde cero</h2>
+          <p>Velas, soportes, gestión del riesgo y psicología. Lecciones cortas y directas.</p>
+          <p><a class="card-link" href="aprender.html">Empezar la guía →</a></p>
+        </article>
+        <article class="card">
+          <div class="card-ico" aria-hidden="true">💬</div>
+          <h2>Chat de la comunidad</h2>
+          <p>Pregunta, comparte ideas y aprende de otros. Sin señales mágicas ni gurús.</p>
+          <p><a class="card-link" href="chat.html">Entrar al chat →</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <p class="kicker">Gráfico en vivo</p>
+        <h2>Analiza cualquier activo</h2>
+        <div class="widget widget-tall">
+          <script src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+          {"symbol":"BME:IBEX","theme":"dark","style":"1","locale":"es","allow_symbol_change":true,"support_host":"https://www.tradingview.com"}
+          </script>
+        </div>
+        <p class="risk">⚠️ El trading con apalancamiento conlleva un riesgo alto y no es adecuado para todo el mundo. Esto es contenido educativo, no asesoramiento financiero.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p><strong>TradingLab</strong> · Educación financiera sin humo</p>
+      <p class="legal">© <span id="year">2026</span> TradingLab · <a href="#top">Volver arriba</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

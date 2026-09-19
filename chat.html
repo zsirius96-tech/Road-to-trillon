@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat de la comunidad — TradingLab</title>
+  <meta name="description" content="Habla con otros traders: preguntas, ideas y análisis en el chat de TradingLab." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header" id="top">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html" aria-label="TradingLab, inicio">
+        <span class="brand-mark" aria-hidden="true">📈</span>
+        <span>TradingLab <small>aprende · sigue · comparte</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list" aria-label="Abrir menú">☰</button>
+        <ul id="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="noticias.html">Noticias</a></li>
+          <li><a href="aprender.html">Aprender</a></li>
+          <li><a href="chat.html" aria-current="page">Chat</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary header-cta" href="aprender.html">Empezar desde cero</a>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="wrap">
+        <p class="kicker">Comunidad</p>
+        <h1>Chat de traders</h1>
+        <p class="lede">Pregunta lo que sea, comparte tu análisis y aprende de otros. Entra con tu cuenta de GitHub (gratis).</p>
+        <div class="rules">
+          <div><strong>✅ Sí:</strong> preguntas, análisis con argumento, gestión del riesgo.</div>
+          <div><strong>⛔ No:</strong> señales "seguras", spam, referidos ni consejos de inversión.</div>
+        </div>
+        <div class="chat-box">
+          <script src="https://utteranc.es/client.js"
+            repo="zsirius96-tech/trading-lab"
+            issue-term="pathname"
+            label="chat"
+            theme="github-dark"
+            crossorigin="anonymous"
+            async>
+          </script>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p><strong>TradingLab</strong> · Educación financiera sin humo</p>
+      <p class="legal">© <span id="year">2026</span> TradingLab · <a href="#top">Volver arriba</a></p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
