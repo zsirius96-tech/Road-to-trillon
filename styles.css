@@ -89,6 +89,8 @@ section { padding: 56px 0; }
 .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 30px; }
 .rules div { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 18px; color: var(--muted); }
 .chat-box { min-height: 300px; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; background: var(--bg-soft); }
+.chat-live { padding: 0; overflow: hidden; }
+.chat-live iframe { display: block; width: 100%; height: 620px; border: 0; background: #fff; }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--line); padding: 28px 0; color: var(--muted); }
